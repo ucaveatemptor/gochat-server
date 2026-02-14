@@ -10,6 +10,8 @@ import (
 	"github.com/tailscale/golang-x-crypto/bcrypt"
 )
 
+// requires username and password
+// later that system should be improved
 func Register(s *db.Storage, w http.ResponseWriter, r *http.Request) {
 	var nu models.ReqUser
 	if err := json.NewDecoder(r.Body).Decode(&nu); err != nil {
@@ -22,6 +24,8 @@ func Register(s *db.Storage, w http.ResponseWriter, r *http.Request) {
 		log.Print("Add user error")
 	}
 }
+
+// requires username and password
 func Login(s *db.Storage, w http.ResponseWriter, r *http.Request) {
 	var ru models.ReqUser
 	if err := json.NewDecoder(r.Body).Decode(&ru); err != nil {

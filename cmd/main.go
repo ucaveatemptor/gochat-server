@@ -36,6 +36,9 @@ func main() {
 	http.HandleFunc("POST /chat/get", func(w http.ResponseWriter, r *http.Request) {
 		chat.GetDMChatID(s, w, r)
 	})
+	http.HandleFunc("GET /chat/messages/get", func(w http.ResponseWriter, r *http.Request) {
+		chat.GetMessages(s, w, r)
+	})
 	log.Print("Server is running")
 	http.ListenAndServe(":8080", nil)
 }

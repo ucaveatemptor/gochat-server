@@ -13,6 +13,8 @@ import (
 
 func (s *Storage) GetOrCreateChatAndReturnChatID(ctx context.Context, users [2]string) (string, error) {
 	// users = users IDs
+
+	// sort
 	if users[0] > users[1] {
 		users[0], users[1] = users[1], users[0]
 	}
@@ -54,6 +56,26 @@ func (s *Storage) GetOrCreateChatAndReturnChatID(ctx context.Context, users [2]s
 	}
 
 	return chat.ID.Hex(), nil
+}
+
+func (s *Storage) GetMessagesByChatID(ctx context.Context, chatId string) []*models.Message {
+	filter := bson.D{
+		{Key: "chatId", Value: chatId},
+	}
+	cursor, err := s.Messages.Find(ctx, filter)
+	if err != nil {
+		log.Print("GetMessagesByChatID err message find")
+	}
+	defer cursor.Close(ctx)
+	messages := make([]*models.Message, 0)
+	for cursor.Next(ctx) {
+		var m models.Message
+		if err := cursor.Decode(&m); err != nil {
+			return nil
+		}
+		messages = append(messages, &m)
+	}
+	return messages
 }
 func (s *Storage) SaveMessage(ctx context.Context, msg models.Message) {
 	doc := bson.M{

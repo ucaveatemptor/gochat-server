@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// if chat exists just returns chatId, if not - creates chat and returns chatId
 func GetDMChatID(s *db.Storage, w http.ResponseWriter, r *http.Request) { // POST
 	// for request {
 	//	users: [string ID,string ID]
@@ -35,8 +36,14 @@ func GetDMChatID(s *db.Storage, w http.ResponseWriter, r *http.Request) { // POS
 		log.Print("GetDMChatID - getchat failed")
 		return
 	}
+	var ChatResponse struct {
+		СhatId string `json:"chatId"`
+	}
+	cr := ChatResponse
+	cr.СhatId = id
+
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(id)
+	err = json.NewEncoder(w).Encode(cr)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		log.Print("GetDMChatID - failed to encode response")
@@ -44,6 +51,8 @@ func GetDMChatID(s *db.Storage, w http.ResponseWriter, r *http.Request) { // POS
 	}
 
 }
+
+// finds users by prefix and returns array of {id, username}
 func FindUsers(s *db.Storage, w http.ResponseWriter, r *http.Request) { // GET
 	ctx := r.Context()
 
@@ -64,6 +73,24 @@ func FindUsers(s *db.Storage, w http.ResponseWriter, r *http.Request) { // GET
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		log.Print("FindUsers - failed to encode response")
+		return
+	}
+}
+func GetMessages(s *db.Storage, w http.ResponseWriter, r *http.Request) { // GET
+	ctx := r.Context()
+
+	chatId := r.URL.Query().Get("chatId")
+	if chatId == "" {
+		http.Error(w, "chatId query param is required", http.StatusBadRequest)
+		return
+	}
+
+	messages := s.GetMessagesByChatID(ctx, chatId)
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(messages)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		log.Print("GetMessages - failed to encode response")
 		return
 	}
 }
