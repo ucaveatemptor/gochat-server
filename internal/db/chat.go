@@ -62,7 +62,8 @@ func (s *Storage) GetMessagesByChatID(ctx context.Context, chatId string) []*mod
 	filter := bson.D{
 		{Key: "chatId", Value: chatId},
 	}
-	cursor, err := s.Messages.Find(ctx, filter)
+	opts := options.Find().SetSort(bson.D{{Key: "createdAt", Value: -1}})
+	cursor, err := s.Messages.Find(ctx, filter, opts)
 	if err != nil {
 		log.Print("GetMessagesByChatID err message find")
 	}

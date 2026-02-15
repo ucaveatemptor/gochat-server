@@ -3,6 +3,7 @@ module gochat-server
 go 1.25.6
 
 require (
+	github.com/go-chi/chi v1.5.5
 	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/tailscale/golang-x-crypto v0.91.0
