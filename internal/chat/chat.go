@@ -94,3 +94,25 @@ func GetMessages(s *db.Storage, w http.ResponseWriter, r *http.Request) { // GET
 		return
 	}
 }
+
+func GetChats(s *db.Storage, w http.ResponseWriter, r *http.Request) { // GET
+	ctx := r.Context()
+
+	userId := r.URL.Query().Get("userId")
+	if userId == "" {
+		http.Error(w, "userId query param is required", http.StatusBadRequest)
+		return
+	}
+
+	chats, err := s.GetChatsByUserID(ctx, userId)
+	if err != nil {
+		log.Printf("chat chat.go GetChats error %v", err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(chats)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		log.Printf("chat chat.go GetChats error %v", err)
+		return
+	}
+}

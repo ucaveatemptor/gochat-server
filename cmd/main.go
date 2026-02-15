@@ -47,6 +47,9 @@ func main() {
 	r.Get("/chat/messages/get", func(w http.ResponseWriter, r *http.Request) {
 		chat.GetMessages(s, w, r)
 	})
+	r.Get("/chats/get", func(w http.ResponseWriter, r *http.Request) {
+		chat.GetChats(s, w, r)
+	})
 	log.Print("Server is running")
 	http.ListenAndServe(":8080", r)
 }
